@@ -7,6 +7,8 @@ const cp = require('child_process');
 const { stringify } = require('querystring');
 const { stdin } = require('process');
 const { S_IFDIR } = require('constants');
+const { shellExecute } = require('./shellExecute');
+const { resolve } = require('path');
 const spawn = require('child_process').spawn;
 const spawnSync = require('child_process').spawnSync;
 
@@ -155,7 +157,70 @@ const cppCompile = (params)=>{
         })
     })
 }
+
+const cppCompileAndExecute = (params) => {
+    const {code,language,inputs,cmdLineInputs} = params;
+    console.log(params);
+    
+    return new Promise((resolve,reject) => {
+        let exec_options = {
+            // cwd : "/home/don/Online Compiler NodeJs" ,
+            // timeout : 1000 ,
+            killSignal : "SIGTERM",
+            stdio:   'pipe',
+            shell: true
+        };
+        shellExecute("g++ test.cpp -o test", false, inputs, exec_options)
+        .then(data => {
+            if(data.err){
+                resolve({
+                    err: true,
+                    errMsg: data.errMsg
+                })
+            }
+            else{
+                exec_options = {
+                    // cwd : "/home/don/Online Compiler NodeJs" ,
+                    // timeout : 1000 ,
+                    killSignal : "SIGTERM",
+                    stdio:   'pipe'
+                };
+                shellExecute("./test",true,inputs,exec_options)
+                .then(data => {
+                    console.log(data);
+                    if(data.err){
+                        resolve({
+                            err: true,
+                            errMsg: data.errMsg
+                        })
+                    }
+                    else resolve({
+                        err: false,
+                        output: data['output']
+                    })
+                })
+                .catch( err => {
+                    console.log(err);
+                    resolve({
+                        err: true,
+                        errMsg: err
+                    })
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            resolve({
+                err: true,
+                errMsg: err
+            })
+        })
+    })
+    
+}
+
 module.exports = {
     cppExecute: cppExecute,
-    cppCompile: cppCompile
+    cppCompile: cppCompile,
+    cppCompileAndExecute: cppCompileAndExecute
 }
