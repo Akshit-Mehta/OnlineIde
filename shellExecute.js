@@ -17,7 +17,7 @@ const shellExecute = (command,inputsPresent,inputs,exec_options) => {
         
         sp.stderr.on("data", (err) => {
             errorOccurred = true;
-            errors += error.toString();
+            errors += err.toString();
         });
 
         sp.stdout.on("data", (message) => {

@@ -9,10 +9,10 @@ const { stdin } = require('process');
 const { S_IFDIR } = require('constants');
 const spawn = require('child_process').spawn;
 const spawnSync = require('child_process').spawnSync;
-const {cCompile, cExecute } = require('./cCompileAndExecute');
+const {cCompile, cExecute, cCompileAndExecute } = require('./cCompileAndExecute');
 const { cppCompile,cppExecute,cppCompileAndExecute } = require('./cppCompileAndExecute');
 const {pythonExecute} = require('./pythonExecute');
-const {javaCompile} = require('./javaCompileAndExecute');
+const {javaCompile,javaCompileAndExecute} = require('./javaCompileAndExecute');
 app.use(bodyParser.json());      
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -24,29 +24,22 @@ app.post('/compiler/c',(req,res)=>{
     const inputs = req.body.inputs;
     const cmdLineInputs = req.body.cmdLineInputs;
     fs.writeFileSync('./test.c',code,{flag: 'w'});
-    return cCompile(req.body)
+    return cCompileAndExecute(req.body)
     .then(data => {
-        // console.log(data," IN Main");
+        
         if(data.err === true){
+            console.log("Error IN Main: ",data);
             res.json({Out: data['errMsg'].toString()});
         }
         else{
-            data['output']
-            .then(response => {
-                    console.log(response);
-                    res.json(response);
-            })
-            .catch(err => {
-                    console.log(err);
-                    res.json(err);
-            })
+            console.log("IN MAIN: ", data)
+            res.json({err: data.err, Out: data['output']});
         }
     })
     .catch(err => {
         console.log(err);
         res.json(err);
     })
-    res.send('<h1>'+code+' '+language+' '+req.body+'</h1>');
 });
 
 app.post('/compiler/cpp',(req,res)=>{
@@ -106,22 +99,15 @@ app.post('/compiler/java', (req,res)=>{
     const inputs = req.body.inputs;
     const cmdLineInputs = req.body.cmdLineInputs;
     fs.writeFileSync('./test.java',code,{flag: 'w'});
-    return javaCompile(req.body)
+    return javaCompileAndExecute(req.body)
     .then(data => {
         // console.log(data," IN Main");
         if(data.err === true){
             res.json({Out: data['errMsg'].toString()});
         }
         else{
-            data['output']
-            .then(response => {
-                console.log(response);
-                res.json(response);
-            })
-            .catch(err => {
-                console.log(err);
-                res.json(err);
-            })
+            console.log("IN MAIN ", data)
+            res.json({err: data.err, Out: data['output']});
         }
     })
     .catch(err => {
