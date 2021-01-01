@@ -12,71 +12,70 @@ const spawnSync = require("child_process").spawnSync;
 const { resolve } = require("path");
 const { shellExecute } = require("./shellExecute");
 
-const cExecute = (inputs, language) => {
+const cExecute = (params) => {
+    const { inputs } = params;
     return new Promise((resolve, reject) => {
         const exec_options = {
-            // cwd: "/home/don/Online Compiler NodeJs",
             timeout: 10000,
             killSignal: "Time Limit Exceeded",
             stdio: "pipe",
         };
-        // fs.writeFileSync('./input.txt',inputs,{flag:'w'},(err)=>{
-        //     if(err) console.log(err);
-        // });
+
         let sp;
 
         sp = spawn("./test", exec_options);
         sp.stdin.write(inputs, "Utf8");
-        // stdin.write()
-        // console.log(inputs)
         sp.stdin.end();
 
 
         setTimeout(function (sp) {
-            resolve({ err: false, output: "Time limit exceeded" });
             if (sp) sp.kill();
+            resolve({ err: false, output: "Time limit exceeded" });
         }, 5000);
 
+        let errors = "", errorOccurred = false;
         sp.stderr.on("data", (err) => {
             console.log("ERROR " + err);
-            resolve({
-                err: true,
-                output: err,
-                error: err,
-            });
+            errorOccurred = true;
+            errors += err;
         });
-        let results = [];
+
+        let results = "";
         sp.stdout.on("data", (message) => {
             console.log("OUTPUT ", `${message}`);
-            let s = message.toString();
-            results.push(s);
-            resolve({
-                err: false,
-                output: message.toString(),
-            });
+            results += message.toString();
         });
-        sp.on("message", (message) => {
-            console.log(message + "IN MESSAGE");
+
+        sp.on("exit", (code,signal) => {
+            console.log("EXIT");
+            if(signal !== null){
+                errorOccurred = true,
+                resolve({
+                    err: true,
+                    output: "Some error occurred. Please try Again!"
+                });
+            }
+            else if(errorOccurred === true && errors.length > 0){
+                resolve({
+                    err: true,
+                    output: errors
+                })
+            }
+            else if(errorOccurred){
+                console.log("Internal Error Occured")
+                resolve({
+                    err: true,
+                    output: "ServerErrorOccured"
+                })
+            }
+            else{
+                resolve({
+                    err: false,
+                    output: results
+                })
+            }
         });
-        sp.on("disconnect", (x) => {
-            console.log("Disconnect");
-        });
-        sp.on("string", (out) => {
-            console.log("String");
-        });
-        sp.on("error", (err) => {
-            console.log(err);
-        });
-        sp.on("exit", () => {
-            console.log("Exit");
-        });
-        sp.on("close", () => {
-            console.log("Close");
-            resolve({
-                err: false,
-                output: results,
-            });
-        });
+
     });
 };
 
@@ -88,7 +87,7 @@ const cCompile = (params) => {
         timeout: 1000,
         killSignal: "SIGTERM",
         stdio: "pipe",
-        shell: true,
+        shell: true
     };
     return new Promise((resolve, reject) => {
         let sp;
@@ -98,20 +97,13 @@ const cCompile = (params) => {
         let cnt = 0;
         //Called if compile errors
         sp.stderr.on("data", (error) => {
-            // console.log("ERROR",error.toString());
-            // console.log(error)
             errorOccurred = true;
             console.log(error.toString(), cnt++);
             errors += error.toString();
-            // resolve({
-            //     err: true,
-            //     errMsg: error.toString()
-            // });
-            // error.on("end",()=>resolve({err: true, errMsg: error.toString()}));
         });
 
         //Output any data.
-        //No output for succesfull compilation.
+        //No output for succesful compilation.
         sp.stdout.on("data", (data) => {
             console.log(data);
         });
@@ -120,11 +112,11 @@ const cCompile = (params) => {
         sp.on("error", (error) => {
             console.log(error + " is the error");
             console.log("ERROR", error.toString());
-            (errorOccurred = true),
-                resolve({
-                    err: true,
-                    errMsg: "Some error occurred. Please try Again!",
-                });
+            errorOccurred = true;
+            resolve({
+                err: true,
+                output: "Some error occurred. Please try Again!",
+            });
         });
 
         //Called when child process is exited.
@@ -132,24 +124,28 @@ const cCompile = (params) => {
         sp.on("exit", (code, signal) => {
             //Child process did'nt exited normally
             if (signal !== null) {
-                // console.log(error+" is the error");
-                // console.log("ERROR",error.toString());
-                (errorOccurred = true),
-                    resolve({
-                        err: true,
-                        errMsg: "Some error occurred. Please try Again!",
-                    });
-            } else if (errorOccurred && errors.length) {
-                reject({
+                errorOccurred = true
+                resolve({
                     err: true,
-                    errMsg: errors,
+                    output: "Some error occurred. Please try Again!",
+                });
+            } else if (errorOccurred && errors.length) {
+                resolve({
+                    err: true,
+                    output: errors,
                 });
             } else {
-                resolve({
-                    err: false,
-                    compileErr: false,
-                    output: cExecute(inputs, language),
-                });
+                cExecute(params)
+                .then(data => {
+                    console.log(data);
+                    resolve({
+                        err: data.err,
+                        output: data.output
+                    });
+                })
+                .catch(err => {
+                    resolve({err: true, output: err});
+                })
             }
         });
 
@@ -157,77 +153,42 @@ const cCompile = (params) => {
         //When all the streams are closed
         // Streams = stderr,stdio,stdin
         sp.on("close", () => {
-            if (errorOccurred === false) {
-                //     // return cExecute();
-                // return cExecute()
-                // .then(data => data)
-                // .catch(err => err);
-                // console.log(x)
-                console.log("NO ERR occ");
-                resolve({
-                    // 'data': cExecute()
-                    data: cExecute(),
-                });
-            }
+            console.log("Close event C Compile");
         });
     });
 };
 
+
 const cCompileAndExecute = (params) => {
-    const { code, language, inputs, cmdLineInputs } = params;
-    return new Promise((resolve,reject) => {
+    const {code, language, inputs} = params;
+    return new Promise((resolve, reject) => {
         const exec_options = {
-            // cwd: "/home/don/Online Compiler NodeJs",
-            timeout: 1000,
-            killSignal: "SIGTERM",
-            stdio: "pipe",
-            shell: true,
-        };
-        shellExecute("gcc test.c -o test ",false,inputs, exec_options,)
-        .then((data) => {
-            if(data.err == true){
-                resolve({
-                    err : true,
-                    errMsg : data.errMsg,
-                })
-            }
+            killSignal : "SIGTERM",
+            stdio:   'pipe',
+            shell: true
+        }
+        shellExecute("gcc test.c -o test", false, inputs, exec_options)
+        .then(data => {
+            if(data.err) resolve({err: true, output: data.errMsg});
             else{
                 const exec_options = {
-                    // cwd: "/home/don/Online Compiler NodeJs",
-                    // timeout: 1000,
                     killSignal: "SIGTERM",
-                    stdio: "pipe",
-                    // shell: true,
-                };
-                shellExecute("./test",true,inputs,exec_options)
-                .then((data) => {
-                    if(data.err == true){
-                        resolve({
-                            err : true,
-                            errMsg : data.errMsg,
-                        })
-                    }
-                    else{
-                        resolve({
-                            err : false,
-                            output : data['output']
-                        })
-                    }
+                    stdio: 'pipe'
+                }
+                shellExecute("./test", true, inputs, exec_options)
+                .then(data => {
+                    if(data.err) resolve({err: true, output: data['errMsg']});
+                    else resolve({err: false, output: data['output']});
                 })
-                .catch( err => {
-                    console.log(err);
-                    resolve({
-                        err: true,
-                        errMsg: err
-                    })
+                .catch(err => {
+                    resolve({err: true, output: err});
                 })
             }
         })
         .catch(err => {
-            console.log(err);
             resolve({
                 err: true,
-                errMsg: err
+                output: "Some Internal Error occured"
             })
         })
     })
@@ -236,5 +197,5 @@ const cCompileAndExecute = (params) => {
 module.exports = {
     cExecute: cExecute,
     cCompile: cCompile,
-    cCompileAndExecute : cCompileAndExecute,
+    cCompileAndExecute : cCompileAndExecute
 };

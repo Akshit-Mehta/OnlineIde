@@ -12,7 +12,7 @@ const spawnSync = require('child_process').spawnSync;
 const {cCompile, cExecute, cCompileAndExecute } = require('./cCompileAndExecute');
 const { cppCompile,cppExecute,cppCompileAndExecute } = require('./cppCompileAndExecute');
 const {pythonExecute} = require('./pythonExecute');
-const {javaCompile,javaCompileAndExecute} = require('./javaCompileAndExecute');
+const {javaCompile,javaExecute,javaCompileAndExecute} = require('./javaCompileAndExecute');
 app.use(bodyParser.json());      
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -26,18 +26,11 @@ app.post('/compiler/c',(req,res)=>{
     fs.writeFileSync('./test.c',code,{flag: 'w'});
     return cCompileAndExecute(req.body)
     .then(data => {
-        
-        if(data.err === true){
-            console.log("Error IN Main: ",data);
-            res.json({Out: data['errMsg'].toString()});
-        }
-        else{
-            console.log("IN MAIN: ", data)
-            res.json({err: data.err, Out: data['output']});
-        }
+        // console.log(data," IN Main");
+        res.json(data);
     })
     .catch(err => {
-        console.log(err);
+        // console.log(err);
         res.json(err);
     })
 });
@@ -52,16 +45,10 @@ app.post('/compiler/cpp',(req,res)=>{
     return cppCompileAndExecute(req.body)
     .then(data => {
         // console.log(data," IN Main");
-        if(data.err === true){
-            res.json({err: data.err, Out: data['errMsg'].toString()});
-        }
-        else{
-            console.log("IN MAIN ", data)
-            res.json({err: data.err, Out: data['output']});
-        }
+        res.json(data);
     })
     .catch(err => {
-        console.log(err);
+        // console.log(err);
         res.json(err);
     })
     res.send('<h1>'+code+' '+language+' '+req.body+'</h1>');
@@ -76,17 +63,11 @@ app.post('/compiler/python',(req,res)=>{
     fs.writeFileSync('./test.py',code,{flag: 'w'});
     return pythonExecute(req.body)
     .then(data => {
-        console.log(data)
+        // console.log(data)
         res.json(data);
-        // if(data.err === true){
-        //     res.json({Out: data['errMsg'].toString()});
-        // }
-        // else{
-        //     res.json({Out: data['output']});
-        // }
     })
     .catch(err => {
-        console.log(err);
+        // console.log(err);
         res.json(err);
     })
     res.send('<h1>'+code+' '+language+' '+req.body+'</h1>');
@@ -102,16 +83,10 @@ app.post('/compiler/java', (req,res)=>{
     return javaCompileAndExecute(req.body)
     .then(data => {
         // console.log(data," IN Main");
-        if(data.err === true){
-            res.json({Out: data['errMsg'].toString()});
-        }
-        else{
-            console.log("IN MAIN ", data)
-            res.json({err: data.err, Out: data['output']});
-        }
+        res.json(data);
     })
     .catch(err => {
-        console.log(err);
+        // console.log(err);
         res.json(err);
     })
     res.send('<h1>'+code+' '+language+' '+req.body+'</h1>');    

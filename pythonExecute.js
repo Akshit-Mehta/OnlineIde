@@ -20,18 +20,18 @@ const pythonExecute = (params) => {
             shell: true
         }
         shellExecute("python3 test.py", true, inputs, exec_options)
-            .then(data => {
-                console.log(data)
-                if (data.err) {
-                    resolve({ err: data.err, Out: data.errMsg });
-                }
-                else {
-                    resolve({
-                        err: data.err,
-                        Out: data.output
-                    })
-                }
-            })
+        .then(data => {
+            console.log(data)
+            if(data.err){
+                resolve({ err: data.err, output: data.errMsg});
+            }
+            else{
+                resolve({
+                    err: data.err,
+                    output: data.output
+                })
+            }
+        })
     })
 }
 module.exports = {
