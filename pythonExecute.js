@@ -11,10 +11,12 @@ const spawn = require('child_process').spawn;
 const spawnSync = require('child_process').spawnSync;
 const { shellExecute } = require('./shellExecute');
 
-const pythonExecute = (params) => {
+const pythonExecute = (params, folderName) => {
     const { code, inputs } = params;
+    const cwd = folderName;
     return new Promise((resolve, reject) => {
         const exec_options = {
+            cwd: cwd,
             killSignal: "SIGTERM",
             stdio: 'pipe',
             shell: true

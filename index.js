@@ -13,6 +13,7 @@ const {cCompile, cExecute, cCompileAndExecute } = require('./cCompileAndExecute'
 const { cppCompile,cppExecute,cppCompileAndExecute } = require('./cppCompileAndExecute');
 const {pythonExecute} = require('./pythonExecute');
 const {javaCompile,javaExecute,javaCompileAndExecute} = require('./javaCompileAndExecute');
+const { RmdirWithData, RmdirWithError } = require('./utilities');
 app.use(bodyParser.json());      
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -60,17 +61,31 @@ app.post('/compiler/python',(req,res)=>{
     // Todo: Inputs and commandLine args
     const inputs = req.body.inputs;
     const cmdLineInputs = req.body.cmdLineInputs;
-    fs.writeFileSync('./test.py',code,{flag: 'w'});
-    return pythonExecute(req.body)
-    .then(data => {
-        // console.log(data)
-        res.json(data);
+    let ip = req.ip;
+    let folderPath = __dirname+'/';
+    folderPath += ip;
+    return fs.promises.mkdir(folderPath, {recursive: true})
+    .then(data => { 
+        console.log("Folder created succesfully");
+        const filePath = `${folderPath}/test.py`; 
+        return fs.promises.writeFile(filePath, code, {flag: 'w'})
+        .then(data => {
+            pythonExecute(req.body, folderPath)
+            .then(data1 => {
+                //res.json(data1)
+                RmdirWithData(folderPath, data1, res);
+            })
+            .catch(err1 => {
+                RmdirWithError(folderPath, err1, res);
+            })
+        })
+        .catch(err => {
+            RmdirWithError(folderPath, err, res);
+        });
     })
     .catch(err => {
-        // console.log(err);
-        res.json(err);
-    })
-    res.send('<h1>'+code+' '+language+' '+req.body+'</h1>');
+        res.json(err)
+    });
 })
 
 app.post('/compiler/java', (req,res)=>{
