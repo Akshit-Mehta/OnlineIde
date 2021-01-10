@@ -164,24 +164,27 @@ const javaCompile = (params) => {
 };
 
 
-const javaCompileAndExecute = (params) => {
+const javaCompileAndExecute = (params, folderPath, className) => {
     const {code, language, inputs} = params;
+    let cwd = folderPath;
     return new Promise((resolve, reject) => {
         const exec_options = {
+            cwd : cwd,
             killSignal : "SIGTERM",
             stdio:   'pipe',
             shell: true
         }
-        shellExecute("javac test.java", false, inputs, exec_options)
+        shellExecute("javac "+className+".java", false, inputs, exec_options)
         .then(data => {
             if(data.err) resolve({err: true, output: data.errMsg});
             else{
                 const exec_options = {
+                    cwd:cwd,
                     killSignal: "SIGTERM",
                     stdio: 'pipe',
                     shell: true
                 }
-                shellExecute("java test", true, inputs, exec_options)
+                shellExecute("java " + className, true, inputs, exec_options)
                 .then(data => {
                     if(data.err) resolve({err: true, output: data['errMsg']});
                     else resolve({err: false, output: data['output']});

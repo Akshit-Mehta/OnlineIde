@@ -12,7 +12,7 @@ const { resolve } = require('path');
 const spawn = require('child_process').spawn;
 const spawnSync = require('child_process').spawnSync;
 
-const cppExecute = (params) => {
+const cppExecute = (params, folderPath) => {
     const { inputs } = params;
     return new Promise((resolve, reject) => {
         const exec_options = {
@@ -155,14 +155,14 @@ const cppCompile = (params) => {
     });
 };
 
-const cppCompileAndExecute = (params) => {
+const cppCompileAndExecute = (params, folderPath) => {
     const {code,language,inputs,cmdLineInputs} = params;
     console.log(params);
-    
+    let cwd = folderPath
     return new Promise((resolve,reject) => {
         let exec_options = {
-            // cwd : "/home/don/Online Compiler NodeJs" ,
-            // timeout : 1000 ,
+            cwd : cwd,
+            // timeout : 1000,
             killSignal : "SIGTERM",
             stdio:   'pipe',
             shell: true
@@ -177,7 +177,7 @@ const cppCompileAndExecute = (params) => {
             }
             else{
                 exec_options = {
-                    // cwd : "/home/don/Online Compiler NodeJs" ,
+                    cwd : cwd,
                     // timeout : 1000 ,
                     killSignal : "SIGTERM",
                     stdio:   'pipe'
