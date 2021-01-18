@@ -87,8 +87,8 @@ app.post('/compiler/python', (req, res) => {
                 .then(data => {
                     pythonExecute(req.body, folderPath)
                         .then(data1 => {
-                            res.json(data1)
-                            // RmdirWithData(folderPath, data1, res);
+                            // res.json(data1)
+                            RmdirWithData(folderPath, data1, res);
                         })
                         .catch(err1 => {
                             RmdirWithError(folderPath, err1, res);
@@ -126,14 +126,14 @@ app.post('/compiler/java', (req, res) => {
                     javaCompileAndExecute(req.body, folderPath, className)
                         .then(data1 => {
                             res.json(data1)
-                            // RmdirWithData(folderPath, data1, res);
+                            RmdirWithData(folderPath, data1, res);
                         })
                         .catch(err1 => {
-                            // RmdirWithError(folderPath, err1, res);
+                            RmdirWithError(folderPath, err1, res);
                         })
                 })
                 .catch(err => {
-                    // RmdirWithError(folderPath, err, res);
+                    RmdirWithError(folderPath, err, res);
                 });
         })
         .catch(err => {
