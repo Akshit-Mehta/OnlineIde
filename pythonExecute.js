@@ -12,7 +12,7 @@ const spawnSync = require('child_process').spawnSync;
 const { shellExecute } = require('./shellExecute');
 
 const pythonExecute = (params, folderName) => {
-    const { code, inputs } = params;
+    const { code, inputs, cmdLineInputs } = params;
     const cwd = folderName;
     return new Promise((resolve, reject) => {
         const exec_options = {
@@ -21,7 +21,8 @@ const pythonExecute = (params, folderName) => {
             stdio: 'pipe',
             shell: true
         }
-        shellExecute("python3 test.py", true, inputs, exec_options)
+        const command = "python3 test.py " + cmdLineInputs;
+        shellExecute(command, true, inputs, exec_options)
         .then(data => {
             console.log(data)
             if(data.err){

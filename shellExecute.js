@@ -7,7 +7,6 @@ const shellExecute = (command,inputsPresent,inputs,exec_options) => {
         setTimeout(function(){if(sp) sp.kill();resolve({err:true,output:'TLE'})},5000);
         let errorOccurred = false;
         let errors = "";
-
         let results = "";
 
         if(inputsPresent==true && inputs.length > 0){
@@ -23,10 +22,6 @@ const shellExecute = (command,inputsPresent,inputs,exec_options) => {
         sp.stdout.on("data", (message) => {
             results += message.toString();
             console.log("Shell Execute output : ", message.toString());
-            // resolve({
-            //     err: false,
-            //     output: message.toString(),
-            // });
         });
 
         sp.on("message", (message) => {

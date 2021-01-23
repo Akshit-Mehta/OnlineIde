@@ -13,16 +13,18 @@ const spawn = require('child_process').spawn;
 const spawnSync = require('child_process').spawnSync;
 
 const cppExecute = (params, folderPath) => {
-    const { inputs } = params;
+    const { inputs, cmdLineInputs } = params;
     return new Promise((resolve, reject) => {
         const exec_options = {
+            cwd: folderPath,
             timeout: 10000,
             killSignal: "Time Limit Exceeded",
             stdio: "pipe",
+            shell: true     //shell true because the directory is changed, /bin/sh internally will use find, then executes file, find command can only be executed in shell
         };
-
+        let command = "./test" + cmdLineInputs;
         let sp;
-        sp = spawn("./test", exec_options);
+        sp = spawn(command, exec_options);
         sp.stdin.write(inputs, "Utf8");
         sp.stdin.end();
 
@@ -77,10 +79,11 @@ const cppExecute = (params, folderPath) => {
     });
 };
 
-const cppCompile = (params) => {
+const cppCompile = (params,folderPath) => {
     const { code, language, inputs, cmdLineInputs } = params;
     console.log(params);
     const exec_options = {
+        cwd : folderPath,
         timeout: 1000,
         killSignal: "SIGTERM",
         stdio: "pipe",
@@ -180,9 +183,11 @@ const cppCompileAndExecute = (params, folderPath) => {
                     cwd : cwd,
                     // timeout : 1000 ,
                     killSignal : "SIGTERM",
-                    stdio:   'pipe'
+                    stdio:   'pipe',
+                    shell: true
                 };
-                shellExecute("./test",true,inputs,exec_options)
+                let command = "./test "+cmdLineInputs;
+                shellExecute(command,true,inputs,exec_options)
                 .then(data => {
                     console.log(data);
                     if(data.err){

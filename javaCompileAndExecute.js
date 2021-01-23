@@ -11,20 +11,20 @@ const spawn = require('child_process').spawn;
 const spawnSync = require('child_process').spawnSync;
 const { shellExecute } = require('./shellExecute');
 
-const javaExecute = (params) => {
-    const { inputs } = params;
+const javaExecute = (params, folderPath, className) => {
+    const { inputs,cmdLineInputs } = params;
 
     return new Promise((resolve, reject) => {
         const exec_options = {
+            cwd: folderPath,
             timeout: 10000,
             killSignal: "Time Limit Exceeded",
             stdio: "pipe",
             shell: true
         };
-
+        let command = "java " + className + " " + cmdLineInputs;
         let sp;
-
-        sp = spawn("java test", exec_options);
+        sp = spawn(command, exec_options);
         sp.stdin.write(inputs, "Utf8");
         sp.stdin.end();
 
@@ -165,7 +165,7 @@ const javaCompile = (params) => {
 
 
 const javaCompileAndExecute = (params, folderPath, className) => {
-    const {code, language, inputs} = params;
+    const {code, language, inputs, cmdLineInputs} = params;
     let cwd = folderPath;
     return new Promise((resolve, reject) => {
         const exec_options = {
@@ -184,7 +184,8 @@ const javaCompileAndExecute = (params, folderPath, className) => {
                     stdio: 'pipe',
                     shell: true
                 }
-                shellExecute("java " + className, true, inputs, exec_options)
+                let command = "java "+className + " " + cmdLineInputs;
+                shellExecute(command, true, inputs, exec_options)
                 .then(data => {
                     if(data.err) resolve({err: true, output: data['errMsg']});
                     else resolve({err: false, output: data['output']});

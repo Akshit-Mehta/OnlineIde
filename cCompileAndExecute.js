@@ -12,18 +12,20 @@ const spawnSync = require("child_process").spawnSync;
 const { resolve } = require("path");
 const { shellExecute } = require("./shellExecute");
 
-const cExecute = (params) => {
-    const { inputs } = params;
+const cExecute = (params, folderPath) => {
+    const { inputs, cmdLineInputs } = params;
     return new Promise((resolve, reject) => {
         const exec_options = {
+            cwd: folderPath,
             timeout: 10000,
             killSignal: "Time Limit Exceeded",
             stdio: "pipe",
+            shell: true         //Shell true is needed because we changed the path
         };
 
+        let command = "./test" + cmdLineInputs;
         let sp;
-
-        sp = spawn("./test", exec_options);
+        sp = spawn(command, exec_options);
         sp.stdin.write(inputs, "Utf8");
         sp.stdin.end();
 
@@ -79,11 +81,11 @@ const cExecute = (params) => {
     });
 };
 
-const cCompile = (params) => {
+const cCompile = (params,folderPath) => {
     const { code, language, inputs, cmdLineInputs } = params;
     console.log(params);
     const exec_options = {
-        // cwd: "/home/don/Online Compiler NodeJs",
+        cwd: folderPath,
         timeout: 1000,
         killSignal: "SIGTERM",
         stdio: "pipe",
@@ -159,10 +161,11 @@ const cCompile = (params) => {
 };
 
 
-const cCompileAndExecute = (params) => {
-    const {code, language, inputs} = params;
+const cCompileAndExecute = (params,folderPath) => {
+    const { code, language, inputs, cmdLineInputs } = params;
     return new Promise((resolve, reject) => {
         const exec_options = {
+            cwd: folderPath,
             killSignal : "SIGTERM",
             stdio:   'pipe',
             shell: true
@@ -171,11 +174,8 @@ const cCompileAndExecute = (params) => {
         .then(data => {
             if(data.err) resolve({err: true, output: data.errMsg});
             else{
-                const exec_options = {
-                    killSignal: "SIGTERM",
-                    stdio: 'pipe'
-                }
-                shellExecute("./test", true, inputs, exec_options)
+                let command = "./test "+cmdLineInputs;
+                shellExecute(command, true, inputs, exec_options)
                 .then(data => {
                     if(data.err) resolve({err: true, output: data['errMsg']});
                     else resolve({err: false, output: data['output']});
