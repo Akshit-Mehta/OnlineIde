@@ -14,10 +14,13 @@ const { cppCompile, cppExecute, cppCompileAndExecute } = require('./cppCompileAn
 const { pythonExecute } = require('./pythonExecute');
 const { javaCompile, javaExecute, javaCompileAndExecute } = require('./javaCompileAndExecute');
 const { RmdirWithData, RmdirWithError,extractClassName } = require('./utilities');
+const cors = require('cors');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+// app.use(cors({credentials: true, origin: true}));
+app.use(cors());
+app.options('*', cors());
 
 app.post('/compiler/c', (req, res) => {
     const code = req.body.code;

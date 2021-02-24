@@ -4,7 +4,16 @@ const shellExecute = (command,inputsPresent,inputs,exec_options) => {
     return new Promise((resolve, reject) => {
         console.log(inputs);
         let sp = spawn(command, exec_options);
-        setTimeout(function(){if(sp) sp.kill();resolve({err:true,output:'TLE'})},5000);
+        // setTimeout(function(){if(sp) {tle = true; sp.kill();}resolve({err:true,output:'TLE'});},5000);
+        let tle = false;
+        setTimeout(function(){
+            try {
+            process.kill(sp.pid, 'SIGKILL');
+            tle = true;
+          } catch (e) {
+            console.log('Cannot kill process');
+          }
+        },5000);
         let errorOccurred = false;
         let errors = "";
         let results = "";
@@ -38,11 +47,17 @@ const shellExecute = (command,inputsPresent,inputs,exec_options) => {
         });
         sp.on("exit", (code, signal) => {
             console.log("Exit");
-            if(signal !== null){
+            if(signal !== null && tle){
+                resolve({
+                    err: true,
+                    errMsg: "TLE"
+                })
+            }
+            else if(signal !== null){
                 errorOccurred = true,
                 resolve({
                     err: true,
-                    errMsg: "Some error occurred. Please try Again!"
+                    errMsg: signal
                 });
             }
             else if(errorOccurred === true && errors.length > 0){
@@ -59,6 +74,7 @@ const shellExecute = (command,inputsPresent,inputs,exec_options) => {
                 })
             }
             else{
+                console.log(results,"IN EXIT");
                 resolve({
                     err: false,
                     output: results

@@ -32,13 +32,13 @@ function extractClassName(code) {
 
 const RmdirWithData = (folderPath, data, res) => {
     return fs.promises.rmdir(folderPath, {recursive: true, maxRetries: 10, retryDelay: 1000})
-            .then(data1 => res.json(data))
+            .then(data1 => res.json({err: false, output: data['output']}))
             .catch(err => res.json({ err: true, output: "Error deleting folder"+err}));
 }
 
 const RmdirWithError = (folderPath, error, res) => {
     return fs.promises.rmdir(folderPath, {recursive: true})
-            .then(data => res.json({err: true, output: error}))
+            .then(data => res.json({err: true, output: error['output']}))
             .catch(err => res.json({err: true, output: "Error deleting folder"+err}))
 }
 
