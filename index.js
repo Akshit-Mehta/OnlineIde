@@ -4,6 +4,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const cp = require('child_process');
+const {v4: uuidv4} = require('uuid');
 const { stringify } = require('querystring');
 const { stdin } = require('process');
 const { S_IFDIR } = require('constants');
@@ -28,7 +29,7 @@ app.post('/compiler/c', (req, res) => {
     // Todo: Inputs and commandLine args
     const inputs = req.body.inputs;
     const cmdLineInputs = req.body.cmdLineInputs;
-    let ip = req.ip;
+    let ip = uuidv4();
     let folderPath = __dirname + '/';
     folderPath += ip;
     return fs.promises.mkdir(folderPath, { recursive: true })
@@ -61,7 +62,7 @@ app.post('/compiler/cpp', (req, res) => {
     // Todo: Inputs and commandLine args
     const inputs = req.body.inputs;
     const cmdLineInputs = req.body.cmdLineInputs;
-    let ip = req.ip;
+    let ip = uuidv4();
     let folderPath = __dirname + '/';
     folderPath += ip;
     return fs.promises.mkdir(folderPath, { recursive: true })
@@ -94,7 +95,7 @@ app.post('/compiler/python', (req, res) => {
     // Todo: Inputs and commandLine args
     const inputs = req.body.inputs;
     const cmdLineInputs = req.body.cmdLineInputs;
-    let ip = req.ip;
+    let ip = uuidv4();
     let folderPath = __dirname + '/';
     folderPath += ip;
     return fs.promises.mkdir(folderPath, { recursive: true })
@@ -127,7 +128,8 @@ app.post('/compiler/java', (req, res) => {
     // Todo: Inputs and commandLine args
     const inputs = req.body.inputs;
     const cmdLineInputs = req.body.cmdLineInputs;
-    let ip = req.ip;
+    let ip = uuidv4();
+    console.log(ip)
     let folderPath = __dirname + "/";
     folderPath += ip;
     return fs.promises.mkdir(folderPath, { recursive:true })
@@ -144,7 +146,7 @@ app.post('/compiler/java', (req, res) => {
                 .then(data => {
                     javaCompileAndExecute(req.body, folderPath, className)
                         .then(data1 => {
-                            res.json(data1)
+                            //res.json(data1)
                             RmdirWithData(folderPath, data1, res);
                         })
                         .catch(err1 => {

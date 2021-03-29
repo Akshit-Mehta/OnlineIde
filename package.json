@@ -1,0 +1,36 @@
+{
+  "name": "onlineide",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "child_process": "^1.0.2",
+    "constants": "^0.0.2",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "prismjs": "^1.23.0",
+    "querystring": "^0.2.0",
+    "rimraf": "^3.0.2",
+    "rimraf-promise": "^2.0.0",
+    "uuid": "^8.3.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Akshit-Mehta/OnlineIde.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Akshit-Mehta/OnlineIde/issues"
+  },
+  "homepage": "https://github.com/Akshit-Mehta/OnlineIde#readme"
+}

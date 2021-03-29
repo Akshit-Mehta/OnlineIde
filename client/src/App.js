@@ -7,13 +7,14 @@ import CodeMirror from 'react-codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/lib/codemirror.js';
 import 'codemirror/mode/clike/clike.js';
-import 'codemirror/theme/monokai.css'
+import 'codemirror/theme/monokai.css';
+import 'codemirror/mode/python/python.js';
 // import 'codemirror/keymap/sublime';
 // import 'codemirror/theme/monokai.css';
 
 
 class App extends React.Component{
-  constructor(){
+  constructor(  ){
     super();
     this.state = {output: "Output", inputs: "Enter inputs", cmdLineInputs: "", language: "cpp", code: "Enter your code here"}
     this.handleChange = this.handleChange.bind(this);
@@ -24,11 +25,15 @@ class App extends React.Component{
     this.setState({[event.target.name]: event.target.value});
   }
 
+  handleChangeDropdown = (event) => {
+    this.setState({"language": event.target.value});
+  }
   submit = () => {
     let config = {
       headers: {'Access-Control-Allow-Origin': '*'}
     };
-    axios.post(`http://172.18.18.92:3002/compiler/cpp`,this.state, config)
+    const path = "http://172.18.18.92:3002/compiler/" + this.state.language;
+    axios.post(path,this.state, config)
     .then(res => {
       console.log(res['data']);
       let data = res['data'];
@@ -57,9 +62,10 @@ class App extends React.Component{
       {/* https://stackoverflow.com/questions/57024486/react-get-codemirror-value-onclick */}
       {/* https://www.microsoft.com/en-us/download/details.aspx?id=52367 */}
       {/* https://www.kaggle.com/c/indoor-location-navigation/discussion/215223 */}
+      <h1 style={{"marginLeft": "500px"}}>Title of the site</h1>
       <CodeMirror
           value={this.state.code}
-          style={{"height": "800px", "width": "20px"}}
+          style={{"height": "800px", "width": "200px", "marginRight": "2000px", "padding": "40px"}}
           options={{
             // mode: 'javascript',
             // mode: 'clike',
@@ -67,7 +73,10 @@ class App extends React.Component{
             lineWrapping: true, 
             styleActiveLine: {nonEmpty: true},
             styleActiveSelected: true,
-            mode: 'text/x-c++src',
+            // mode: 'text/x-c++src',
+            // mode: 'text/x-python',
+            mode: 'text/x-java',
+            version: '3',
             matchBrackets: true,
             theme: "monokai",
             lineNumbers: true,
@@ -85,7 +94,16 @@ class App extends React.Component{
         <textarea name="output" rows="20" cols="40" value={this.state.output} onChange={this.handleChange}>
           
         </textarea>
-      <button onClick={this.submit}> Submit Code</button>
+        <select 
+        defaultValue={this.state.language} 
+        onChange={this.handleChangeDropdown} 
+      >
+       <option value="cpp" >C++</option>
+        <option value="c" >C</option>
+        <option value="java" >Java</option>
+        <option value="python" >Python</option>
+      </select>
+      <button onClick={this.submit} > Submit Code</button>
     </div>
     )
   }
