@@ -1,38 +1,53 @@
-// import logo from './logo.svg';
-import './App.css';
 import React from 'react';
-// import ReactDOM from 'react-dom';
+import Navbar from './Navbar'
 import axios from 'axios';
-import CodeMirror from 'react-codemirror';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/lib/codemirror.js';
-import 'codemirror/mode/clike/clike.js';
-import 'codemirror/theme/monokai.css';
-import 'codemirror/mode/python/python.js';
-// import 'codemirror/keymap/sublime';
-// import 'codemirror/theme/monokai.css';
+import CodeSection from './CodeSection';
 
 
 class App extends React.Component{
-  constructor(  ){
+  constructor( ){
     super();
-    this.state = {output: "Output", inputs: "Enter inputs", cmdLineInputs: "", language: "cpp", code: "Enter your code here"}
+    this.state = {
+      output: "Output", 
+      inputs: "Enter inputs",
+       cmdLineInputs: "", 
+       language: "cpp", 
+       code: "Enter your code here",
+       theme:"monokai",
+       options:{
+         "tabSize": 2
+       }
+    }
     this.handleChange = this.handleChange.bind(this);
+    this.handleChangeCode = this.handleChangeCode.bind(this);
+    this.handleChangeTabSize = this.handleChangeTabSize.bind(this);
   }
 
+  handleChangeTabSize = (event) => {
+      let options = {
+        "tabSize": event.target.value
+      }
+      this.setState({"options": options})
+  }
   handleChange = (event)=>{
     // console.log(event.target)
     this.setState({[event.target.name]: event.target.value});
   }
-
-  handleChangeDropdown = (event) => {
-    this.setState({"language": event.target.value});
+  
+  //Separate HandleChange for code because of Codemirror onChange method.
+  //Either I put Codemirror component in this component( and get rid of this method)
+  //Or
+  //Create a new child component which has Codemirror component (Works with this method)
+  handleChangeCode = (value) => {
+    // console.log(value)
+    this.setState({"code": value});
   }
+
   submit = () => {
     let config = {
       headers: {'Access-Control-Allow-Origin': '*'}
     };
-    const path = "http://172.18.18.92:3002/compiler/" + this.state.language;
+    const path = "http://localhost:3002/compiler/" + this.state.language;
     axios.post(path,this.state, config)
     .then(res => {
       console.log(res['data']);
@@ -45,11 +60,9 @@ class App extends React.Component{
   }
 
   render(){
-  //   var options = {
-  //     lineNumbers: true,
-  //     mode: 'c',
-  //     value: "Enter code here"
-  // };
+    let langToMode = {
+
+    }
     return(
     <div>
       {/* <CodeMirror name="code" value={this.state.code} onChange={this.updateCode} options={options} /> */}
@@ -63,46 +76,25 @@ class App extends React.Component{
       {/* https://www.microsoft.com/en-us/download/details.aspx?id=52367 */}
       {/* https://www.kaggle.com/c/indoor-location-navigation/discussion/215223 */}
       <h1 style={{"marginLeft": "500px"}}>Title of the site</h1>
-      <CodeMirror
-          value={this.state.code}
-          style={{"height": "800px", "width": "200px", "marginRight": "2000px", "padding": "40px"}}
-          options={{
-            // mode: 'javascript',
-            // mode: 'clike',
-            // mode: 'text/x-csrc',
-            lineWrapping: true, 
-            styleActiveLine: {nonEmpty: true},
-            styleActiveSelected: true,
-            // mode: 'text/x-c++src',
-            // mode: 'text/x-python',
-            mode: 'text/x-java',
-            version: '3',
-            matchBrackets: true,
-            theme: "monokai",
-            lineNumbers: true,
-          }}
-          onChange={(editor, data, value) => {
-            // console.log(editor);
-            this.setState({
-              code: editor
-            })           
-          }}
-        />
-      <textarea name="inputs" rows ="20" cols="40" value={this.state.inputs} onChange={this.handleChange}>
-        
-        </textarea>
-        <textarea name="output" rows="20" cols="40" value={this.state.output} onChange={this.handleChange}>
+      <Navbar 
+          language = {this.state.language}
+          theme = {this.state.theme}
+          onChange = {this.handleChange}
+      />
+      <CodeSection 
+        code = {this.state.code}
+        onChange = {this.handleChangeCode}
+        language = {this.state.language}
+        theme = {this.state.theme}
+        options = {this.state.options}
+      />
+      {/* Only for reference <input type="number" value = {this.state.options.tabSize} onChange = {this.handleChangeTabSize} /> */}
+      <textarea name="inputs" rows ="5" cols="40" value={this.state.inputs} onChange={this.handleChange}>
+                
+      </textarea>
+      <textarea name="output" rows="20" cols="40" value={this.state.output} onChange={this.handleChange}>
           
-        </textarea>
-        <select 
-        defaultValue={this.state.language} 
-        onChange={this.handleChangeDropdown} 
-      >
-       <option value="cpp" >C++</option>
-        <option value="c" >C</option>
-        <option value="java" >Java</option>
-        <option value="python" >Python</option>
-      </select>
+      </textarea>
       <button onClick={this.submit} > Submit Code</button>
     </div>
     )

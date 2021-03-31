@@ -37,7 +37,7 @@ const RmdirWithData = (folderPath, data, res) => {
 }
 
 const RmdirWithError = (folderPath, error, res) => {
-    return fs.promises.rmdir(folderPath, {recursive: true})
+    return fs.promises.rmdir(folderPath, {recursive: true, maxRetries: 10, retryDelay: 1000})
             .then(data => res.json({err: true, output: error['output']}))
             .catch(err => res.json({err: true, output: "Error deleting folder"+err}))
 }
