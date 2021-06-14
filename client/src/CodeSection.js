@@ -6,10 +6,10 @@ import 'codemirror/mode/clike/clike.js';
 import 'codemirror/mode/python/python.js';
 import 'codemirror/mode/javascript/javascript.js'
 import 'codemirror/addon/wrap/hardwrap';
-import 'codemirror/addon/fold/brace-fold';
+import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/addon/edit/closebrackets';
-
+import 'codemirror/addon/hint/anyword-hint'
 import 'codemirror/theme/3024-day.css'
 import 'codemirror/theme/3024-night.css'
 import 'codemirror/theme/abcdef.css'
@@ -76,6 +76,10 @@ import 'codemirror/theme/zenburn.css'
 
 
 class CodeSection extends React.Component{
+    constructor(props){
+        super(props);
+        this.codemirrorRef = React.createRef();
+    }
     render(){
         let langToMode = {
             "c": 'text/x-csrc',
@@ -83,22 +87,33 @@ class CodeSection extends React.Component{
             "java": 'text/x-java',
             "python": 'text/x-python'
         }
+
+        let options = {...this.props.options}
+        options['mode'] = langToMode[this.props.language]
+        options['theme'] = this.props.theme;
+        console.log(options)
+        console.log(this.codemirrorRef.current);
+        // this.codemirrorRef.current.codemirror.doc.style.fontSize = this.props.options.fontSize;
+        // this.codemirrorRef.current.codeMirror.doc.cm.options()
         return(
             <CodeMirror
                     value={this.props.code}
-                    style={{"height": "800px", "width": "200px", "marginRight": "2000px", "padding": "40px"}}
-                    options={{
-                        lineWrapping: true, 
-                        styleActiveLine: {nonEmpty: true},
-                        styleActiveSelected: true,
-                        tabSize: this.props.options.tabSize,
-                        mode: langToMode[this.props.language],
-                        matchTags: true,
-                        autoCloseBrackets: true,
-                        matchBrackets: true,
-                        theme: this.props.theme,
-                        lineNumbers: true,
-                    }}
+                    // style={{"height": "800px", "width": "200px", "marginRight": "2000px", "padding": "40px","fontSize": options['fontSize']}}
+                    // options={{
+                    //     lineWrapping: true, 
+                    //     styleActiveLine: {nonEmpty: true},
+                    //     styleActiveSelected: true,
+                    //     tabSize: this.props.options.tabSize,
+                    //     mode: langToMode[this.props.language],
+                    //     matchTags: true,
+                    //     autoCloseBrackets: true,
+                    //     matchBrackets: true,
+                    //     theme: this.props.theme,
+                    //     lineNumbers: true,
+                    // }}
+                    className={"font"+this.props.options.fontSize}
+                    ref={this.codemirrorRef}
+                    options = {options}
                     onChange={(editor, data, value) => {
                         // console.log(editor);
                         // this.setState({
