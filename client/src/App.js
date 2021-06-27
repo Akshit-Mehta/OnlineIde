@@ -87,7 +87,7 @@ class App extends React.Component{
       console.log(data);
       this.setState({"output": data['output'],submitButtonText:"Submit",submitButtonDisabled:false});
     })
-    .catch(err => this.setState({"output": "Some error occured client"}));
+    .catch(err => this.setState({"output": "Some error occured client",submitButtonText:"Submit",submitButtonDisabled:false}));
 
   }
 
