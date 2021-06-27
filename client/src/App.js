@@ -11,9 +11,11 @@ class App extends React.Component{
     this.state = {
       output: "", 
       inputs: "",
+      submitButtonText: "Submit",
+      submitButtonDisabled: false,
       cmdLineInputs: "", 
-      language: "cpp", 
-      code: "Enter your code here",
+      language: "python", 
+      code: "print(\"Sunil\")",
       theme:"monokai",
       options:{
         "tabSize": 2,
@@ -74,14 +76,18 @@ class App extends React.Component{
       cmdLineInputs: this.state.cmdLineInputs,
       inputs: this.state.inputs
     }
+    console.log(this.state.submitButtonText)
+    this.setState({submitButtonText:"Running",submitButtonDisabled:true})
+    console.log(this.state.submitButtonText)
     axios.post(path,obj, config)
     .then(res => {
+
       console.log(res['data']);
       let data = res['data'];
       console.log(data);
-      this.setState({"output": data['output']});
+      this.setState({"output": data['output'],submitButtonText:"Submit",submitButtonDisabled:false});
     })
-    .catch(err => this.setState({"output": "Some error occured client"}));
+    .catch(err => this.setState({"output": "Some error occured client",submitButtonText:"Submit",submitButtonDisabled:false}));
 
   }
 
@@ -128,7 +134,7 @@ class App extends React.Component{
       </textarea>
       </div>
       </div>
-      <button onClick={this.submit} > Submit Code</button>
+      <button  onClick={ () => { this.submit() }  } disabled={this.state.submitButtonDisabled}> {this.state.submitButtonText}</button>
       {/* <div className="row">
         <div className="col-md-6">Div1</div>
           <div className="col-md-3">Div2</div>

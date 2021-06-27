@@ -1,5 +1,4 @@
 const express = require('express');
-const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
 const fs = require('fs');
@@ -17,6 +16,7 @@ const { javaCompile, javaExecute, javaCompileAndExecute } = require('./javaCompi
 const { RmdirWithData, RmdirWithError,extractClassName } = require('./utilities');
 const cors = require('cors');
 
+const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(cors({credentials: true, origin: true}));
@@ -162,7 +162,6 @@ app.post('/compiler/java', (req, res) => {
         });
 })
 
-// const cppCompile()
 let port = 3002;
 app.listen(port, () => {
     console.log(`App Started on PORT ${port}`);
