@@ -23,6 +23,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.options('*', cors());
 
+app.get('/',(req,res)=>{
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+})
+
 app.post('/compiler/c', (req, res) => {
     const code = req.body.code;
     const language = req.body.language;
