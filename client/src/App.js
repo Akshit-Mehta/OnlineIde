@@ -67,8 +67,8 @@ class App extends React.Component{
     let config = {
       headers: {'Access-Control-Allow-Origin': '*'}
     };
-    const path = "http://localhost:3002/compiler/" + this.state.language;
-    
+    // const path = "http://localhost:3002/compiler/" + this.state.language;
+    const path = "https://online-ide-main.herokuapp.com/compiler/" + this.state.language;
     // Only send the required things.
     const obj = {
       language: this.state.language,

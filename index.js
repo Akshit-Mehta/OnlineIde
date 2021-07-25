@@ -162,7 +162,10 @@ app.post('/compiler/java', (req, res) => {
         });
 })
 
-let port = 3002;
+let port = process.env.PORT;
+if(port == null || port == "") {
+	port = 3002;
+}
 app.listen(port, () => {
     console.log(`App Started on PORT ${port}`);
 });
