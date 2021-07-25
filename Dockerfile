@@ -17,9 +17,9 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-RUN cd client
-RUN npm install
-RUN cd ..
+# RUN cd client
+# RUN npm install
+# RUN cd ..
 
 RUN apt-get install g++
 RUN apt-get update && \

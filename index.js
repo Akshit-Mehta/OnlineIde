@@ -19,12 +19,13 @@ const cors = require('cors');
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'client','build')));
 // app.use(cors({credentials: true, origin: true}));
 app.use(cors());
 app.options('*', cors());
 
 app.get('/',(req,res)=>{
-    res.sendFile(path.join(__dirname, 'client','build', 'index.html'));
+    res.sendFile(path.join(__dirname,'build', 'index.html'));
 })
 
 app.post('/compiler/c', (req, res) => {
