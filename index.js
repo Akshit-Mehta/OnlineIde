@@ -19,9 +19,14 @@ const cors = require('cors');
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'client','build')));
 // app.use(cors({credentials: true, origin: true}));
 app.use(cors());
 app.options('*', cors());
+
+app.get('/',(req,res)=>{
+    res.sendFile(path.join(__dirname,'build', 'index.html'));
+})
 
 app.post('/compiler/c', (req, res) => {
     const code = req.body.code;
@@ -162,7 +167,10 @@ app.post('/compiler/java', (req, res) => {
         });
 })
 
-let port = 3002;
+let port = process.env.PORT;
+if(port == null || port == "") {
+	port = 3002;
+}
 app.listen(port, () => {
     console.log(`App Started on PORT ${port}`);
 });
