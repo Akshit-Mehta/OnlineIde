@@ -29,7 +29,13 @@ const shellExecute = (command,inputsPresent,inputs,exec_options) => {
         });
 
         sp.stdout.on("data", (message) => {
+            var limit = 5000;
             results += message.toString();
+            if(results.length>limit){
+                results = results.substring(0,limit);
+                results += "\nOUTPUT LIMIT EXCEEDED...";
+            }
+            
             console.log("Shell Execute output : ", message.toString());
         });
 
