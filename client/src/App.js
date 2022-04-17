@@ -19,14 +19,13 @@ class App extends React.Component{
       theme:"monokai",
       options:{
         "tabSize": 2,
-        "lineWrapping": true, 
-        "styleActiveLine": {nonEmpty: true},
-        "styleActiveSelected": true,
-        "matchTags": true,
-        "autoCloseBrackets": true,
-        "matchBrackets": true,
-        "lineNumbers": true,
-        "fontSize": 20
+        "wrapEnabled": true, 
+        "highlightActiveLine": true,
+        "enableSnippets": true,
+        "showLineNumbers": true,
+        "fontSize": 18,
+        "enableBasicAutocompletion": true,
+        "enableLiveAutocompletion": true,
       }
     }
     this.handleChange = this.handleChange.bind(this);
@@ -44,7 +43,7 @@ class App extends React.Component{
 
   handleChangeOptions = (event) => {
     let optionCopy = {...this.state.options};
-    if(event.target.type === "number") optionCopy[event.target.name] = event.target.value;
+    if(event.target.type === "number") optionCopy[event.target.name] = parseInt(event.target.value, 10);//event.target.value;
     else optionCopy[event.target.name] = event.target.checked;
     this.setState({"options": optionCopy});
   }
@@ -60,15 +59,15 @@ class App extends React.Component{
   //Create a new child component which has Codemirror component (Works with this method)
   handleChangeCode = (value) => {
     // console.log(value)
-    this.setState({"code": value});
+    this.setState({...this.state, "code": value});
   }
 
   submit = () => {
     let config = {
       headers: {'Access-Control-Allow-Origin': '*'}
     };
-    const path = "http://localhost:3002/compiler/" + this.state.language;
-    
+    // const path = "http://localhost:3002/compiler/" + this.state.language;
+    const path = "https://online-ide-dev.herokuapp.com/compiler/" + this.state.language;
     // Only send the required things.
     const obj = {
       language: this.state.language,

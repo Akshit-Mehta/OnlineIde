@@ -1,83 +1,5 @@
-.font1{font-size: 1px;}
-.font2{font-size: 2px;}
-.font3{font-size: 3px;}
-.font4{font-size: 4px;}
-.font5{font-size: 5px;}
-.font6{font-size: 6px;}
-.font7{font-size: 7px;}
-.font8{font-size: 8px;}
-.font9{font-size: 9px;}
-.font10{font-size: 10px;}
-.font11{font-size: 11px;}
-.font12{font-size: 12px;}
-.font13{font-size: 13px;}
-.font14{font-size: 14px;}
-.font15{font-size: 15px;}
-.font16{font-size: 16px;}
-.font17{font-size: 17px;}
-.font18{font-size: 18px;}
-.font19{font-size: 19px;}
-.font20{font-size: 20px;}
-.font21{font-size: 21px;}
-.font22{font-size: 22px;}
-.font23{font-size: 23px;}
-.font24{font-size: 24px;}
-.font25{font-size: 25px;}
-.font26{font-size: 26px;}
-.font27{font-size: 27px;}
-.font28{font-size: 28px;}
-.font29{font-size: 29px;}
-.font30{font-size: 30px;}
-.font31{font-size: 31px;}
-.font32{font-size: 32px;}
-
-/* .CodeMirror { */
-  /* border: 1px solid #eee; */
-  /* height: 80vh; */
-  /* margin-right: 20px; */
-  /* width: 1300px; */
-  /* width: 60vw; */
-  /* resize: both; */
-/* } */
-
-/* .flex-container1 {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-}
-
-.flex-container2 {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-
-.item1{
-  width: 60vw;
-}
-
-.item2{
-  width: 40vw;
-}
-
-.item21 {
-  align-self: left;
-  flex: 1 1 0;
-}
-
-.item22 {
-  align-self: right;
-  flex: 1 1 0;
-}
-
-.item23 {
-  flex: 100%;
-} */
-
-
-
 @media (max-width: 575.98px) { 
-  .CodeMirror {
+  .AceEditor {
     border: 1px solid #eee;
     height: 80vh;
     /* width: 1300px; */
@@ -126,9 +48,9 @@
 
 /* // Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) and (max-width: 767.98px) { 
-  .CodeMirror {
+  .AceEditor {
     border: 1px solid #eee;
-    height: 80vh;
+    height: 50vh;
     /* width: 1300px; */
     width: 99vw;
     resize: both;
@@ -170,8 +92,8 @@
 
 /* // Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) and (max-width: 992px) { 
-  /* .CodeMirror { */
-    .CodeMirror  {
+  /* .AceEditor { */
+    .AceEditor  {
     border: 1px solid #eee;
     height: 80vh;
     margin-right: 1vw;
@@ -181,7 +103,7 @@
     /* font-family: Arial; */
     /* font-family: Impact; */
     
-    font-size: 20px;
+    /* font-size: 20px; */
   }
   
   .flex-container1 {
@@ -232,7 +154,7 @@
 /* // Large devices (desktops, 992px and up) */
 @media (min-width: 992px) { 
 
-  .CodeMirror {
+  .AceEditor {
     border: 1px solid #eee;
     height: 80vh;
     margin-right: 20px;
@@ -288,7 +210,7 @@
 /* // Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) { 
 
-  .CodeMirror {
+  .AceEditor {
     border: 1px solid #eee;
     height: 80vh;
     margin-right: 20px;
